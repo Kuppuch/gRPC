@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GRPCGreeterClient": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
