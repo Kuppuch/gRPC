@@ -1,4 +1,8 @@
-/GRPCGreeterClient/bin/
-/GRPCGreeterClient/obj/
-/GrpcService1/bin/
-/GrpcService1/obj/
+/GRPCGreeterClient/.vs/
+/GRPCGreeterClient/GRPCGreeterClient/bin/
+/GRPCGreeterClient/GRPCGreeterClient/obj/
+/GrpcService1/.vs/
+/GrpcService1/GrpcService1/bin/
+/GrpcService1/GrpcService1/obj/
+/GrpcService1/gRPC_Client/
+
