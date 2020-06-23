@@ -1,7 +1,9 @@
 /GRPCGreeterClient/.vs/
+/GRPCGreeterClient/.idea/
 /GRPCGreeterClient/GRPCGreeterClient/bin/
 /GRPCGreeterClient/GRPCGreeterClient/obj/
 /GrpcService1/.vs/
+/GrpcService1/.idea/
 /GrpcService1/GrpcService1/bin/
 /GrpcService1/GrpcService1/obj/
 /GrpcService1/gRPC_Client/
