@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd GrpcService1/GrpcService1;
+cd GrpcService2.0/GrpcService2.0;
 pwd;
 ls;
 dotnet build -f netcoreapp3.1

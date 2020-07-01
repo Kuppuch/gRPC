@@ -9,15 +9,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
 namespace GrpcService2._0 {
-    public class Program {
-        static Thread common = new Thread(new ThreadStart(Common));
+    class Program {
         static Random rand = new Random();
-        public static int v = 0;
+        List<IObserver> observers = new List<IObserver>();
+        static int number = 0;
+
         public static void Main(string[] args) {
 
-            common.Name = "Общий поток";
-            common.Start();
-
+            GreeterService gs = new GreeterService();
             CreateHostBuilder(args).Build().Start();
             
             
@@ -36,12 +35,17 @@ namespace GrpcService2._0 {
 
 
 
-        public static void Common() {
-            while (true) {
-                v = rand.Next(0, 20);
-                //Console.WriteLine("___ " + v);
-                Thread.Sleep(500 + rand.Next(0, 500));
-            }
-        }
+        //public static void Common() {
+        //    while (true) {
+        //        number = rand.Next(0, 20);
+        //        //Console.WriteLine("___ " + number);
+        //        NotifyObservers();
+        //        Thread.Sleep(500 + rand.Next(0, 500));
+                
+        //    }
+        //}
+
     }
+
+
 }
