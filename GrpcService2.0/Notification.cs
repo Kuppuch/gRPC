@@ -8,5 +8,6 @@ namespace GrpcService2._0
     public struct Notification {
         public Number number;
         public IObserver observer;
+        public string i;
     }
 }

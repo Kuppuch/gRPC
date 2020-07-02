@@ -17,10 +17,10 @@ namespace GrpcService2._0 {
             });
         }
 
-        public IServerStreamWriter<NumReply> responseStream;
-        public ServerCallContext context;
+        //public IServerStreamWriter<NumReply> responseStream;
+        //public ServerCallContext context;
 
-        Random rand = new Random();
+        string number;
 
         public delegate void CheckNumber();
         public event CheckNumber Upd;
@@ -30,8 +30,6 @@ namespace GrpcService2._0 {
 
         public override async Task GetRandNum(NumRequest request, IServerStreamWriter<NumReply> responseStream, ServerCallContext context) {
 
-            this.responseStream = responseStream;
-            this.context = context;
             if (num == null) {
                 num = new Number();  
             }
@@ -42,36 +40,22 @@ namespace GrpcService2._0 {
             Console.WriteLine(num);
 
             while (true) {
-                //if (b) {
-                //    var resp = new NumReply {
-                //        Message = Convert.ToString(num.ValueNumber)
-                //    };
-                //    Console.WriteLine(resp + " ›“Œ »« ÀŒ√¿");
-                //    await responseStream.WriteAsync(resp);
-                //    b = false;
-                //}
+                if (b) {
+                    var resp = new NumReply {
+                        Message = Convert.ToString(number)
+                    };
+                    Console.WriteLine(resp + " ›“Œ »« ÀŒ√¿");
+                    await responseStream.WriteAsync(resp);
+                    b = false;
+                }
 
             }
-            num.RemoveObserver(this);
         }
 
         public void Update(object ob) {
             Notification value = (Notification)ob;
-            var resp = new NumReply {
-                Message = Convert.ToString(value.number.ValueNumber)
-            };
-            try {
-                responseStream.WriteAsync(resp);
-            } catch (System.InvalidOperationException e) {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(" ÎËÂÌÚ Û¯∏Î");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                num.RemoveObserver(this);
-            }
-            
+            number = value.number.ValueNumber + " - " + value.i;
             b = true;
-            //Upd?.Invoke(value);
-            Console.WriteLine("”‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡, Ò‡·ÓÚ‡Î ¿Ô‰ÂÈÚ");
         }
     }
 }

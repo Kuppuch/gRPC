@@ -21,7 +21,7 @@ namespace GRPCGreeterClient {
             using var call = client.GetRandNum(new NumRequest { Name = "World" });
 
             await foreach (var response in call.ResponseStream.ReadAllAsync()) {
-                Console.WriteLine("Number: " + response.Message);
+                Console.WriteLine(response.Message);
             }
 
             Console.WriteLine("Press any key to exit...");
