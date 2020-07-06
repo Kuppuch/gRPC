@@ -2,39 +2,41 @@ package main
 
 import (
 	"context"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"math/rand"
 	"net"
-
-	"google.golang.org/grpc"
 	pb "server/Protos/google.golang.org/grpc/greet"
 )
 
-const (
-	port = ":5001"
-)
-
 type server struct {
-	pb.UnimplementedGreeterServer
-}
-
-func (s *server) GetRandNum(ctx context.Context, stream *pb.NumRequest) (*pb.NumReply, error) {
-	for true {
-		number := rand.Intn(100)
-		log.Printf("Received: %v")
-		return &pb.NumReply{Message: string(number)}, nil
-	}
 
 }
 
-func main() {
-	lis, err := net.Listen("tcp", port)
+func main()  {
+	lis, err := net.Listen("tcp", ":5001")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &server{})
-	if err := s.Serve(lis); err != nil {
+	srv := grpc.NewServer()
+	pb.RegisterGreeterServer(srv, &server{})
+	reflection.Register(srv)
+	if err := srv.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
+}
+
+func (s *server) GetRandNum(*pb.NumRequest, pb.Greeter_GetRandNumServer) error{
+	for true {
+		number := rand.Intn(100)
+		log.Printf("Received: %v")
+		return &pb.NumReply{Message: string(number)}
+	}
+}
+
+func (s *server) SayHelloSayHello(ctx context.Context, request *pb.HelloRequest) (*pb.HelloReply, error) {
+	number := rand.Intn(100)
+	log.Printf("Received: %v")
+	return &pb.HelloReply{Message: string(number)}, nil
 }
