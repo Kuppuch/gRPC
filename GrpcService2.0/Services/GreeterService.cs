@@ -20,7 +20,7 @@ namespace GrpcService2._0 {
         //public IServerStreamWriter<NumReply> responseStream;
         //public ServerCallContext context;
 
-        string number;
+        int number;
 
         public delegate void CheckNumber();
         public event CheckNumber Upd;
@@ -42,7 +42,7 @@ namespace GrpcService2._0 {
             while (true) {
                 if (b) {
                     var resp = new NumReply {
-                        Message = Convert.ToString(number)
+                        Message = number
                     };
                     Console.WriteLine(resp + " ›“Œ »« ÀŒ√¿");
                     await responseStream.WriteAsync(resp);
@@ -54,7 +54,7 @@ namespace GrpcService2._0 {
 
         public void Update(object ob) {
             Notification value = (Notification)ob;
-            number = value.number.ValueNumber + " - " + value.i;
+            number = value.number.ValueNumber;
             b = true;
         }
     }

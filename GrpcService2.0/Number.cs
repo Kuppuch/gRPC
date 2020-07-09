@@ -12,7 +12,7 @@ namespace GrpcService2._0{
         private readonly object locker = new object();
         List<IObserver> observers = new List<IObserver>();
         List<IObserver> observers2Remove = new List<IObserver>();
-        public string ValueNumber { get; set; }
+        public int ValueNumber { get; set; }
         int num;
 
         public Number() {
@@ -52,7 +52,7 @@ namespace GrpcService2._0{
                 while (true) {
                     try {
                         num = rand.Next(0, 20);
-                        ValueNumber = Convert.ToString(num);
+                        ValueNumber = num;
                         //Console.WriteLine("Значение числа =  " + ValueNumber);
                         NotifyObservers();
                         Thread.Sleep(100 + rand.Next(0, 50));
