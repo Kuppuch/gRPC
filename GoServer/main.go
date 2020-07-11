@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/reactivex/rxgo/v2"
 	"google.golang.org/grpc"
 	"log"
 	"math/rand"
@@ -13,24 +14,28 @@ import (
 type server struct {
 	pb.UnimplementedGreeterServer
 }
-
-var b bool
-var number = make(chan int32)
-
+var number = make(chan rxgo.Item)
+var observable rxgo.Observable
 func main()  {
+	observable = rxgo.FromEventSource(number, rxgo.WithBackPressureStrategy(rxgo.Drop))
 
-	//go generate(number)
-	go func() {
+	go generate(number)
+	/*go func() {
+		var val int32
 		for true {
-			val:= rand.Int31n(100)
-			fmt.Println(val)
-			b = true
+
+			val = rand.Int31n(100)
 			number <- val
+			//number <- rand.Int31n(100)
+			fmt.Println(" Г", val)
+			//i++
+			//b = true
+			//number <- val
 			time.Sleep(time.Second)
+
 		}
 		close(number)
-	}()
-
+	}()*/
 
 	lis, err := net.Listen("tcp", "0.0.0.0:5001")
 	if err != nil {
@@ -46,26 +51,25 @@ func main()  {
 }
 
 func (s *server) GetRandNum(req *pb.NumRequest, resp pb.Greeter_GetRandNumServer) error {
+
+	fmt.Println("Метод вызван")
 	for true {
-		if b {
-			val:=<-number
-			fmt.Printf("Send client %v",val)
-			err := resp.Send(&pb.NumReply{Message: val})
+		for item := range observable.Observe() {
+			va := item.V
+			fmt.Println(" Send ", va)
+			err := resp.Send(&pb.NumReply{Message: va.(int32)})
 			if err!=nil {
 				return err
 			}
-			b = false
 		}
 	}
 	return nil
 }
 
-func generate(number chan int){
+func generate(number chan rxgo.Item) {
 	for {
-		number <- rand.Intn(100)
-		b = true
-		time.Sleep(time.Second)
+		val := rand.Int31n(100)
+		number <- rxgo.Item{V: val}
+		time.Sleep(time.Second * 2)
 	}
-
-	close(number)
 }

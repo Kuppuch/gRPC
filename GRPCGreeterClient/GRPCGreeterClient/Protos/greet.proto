@@ -26,5 +26,5 @@ message NumRequest {
 }
 
 message NumReply {
-  string message = 1;
+  int32 message = 1;
 }
