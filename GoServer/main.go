@@ -51,16 +51,13 @@ func main()  {
 }
 
 func (s *server) GetRandNum(req *pb.NumRequest, resp pb.Greeter_GetRandNumServer) error {
-
 	fmt.Println("Метод вызван")
-	for true {
-		for item := range observable.Observe() {
-			va := item.V
-			fmt.Println(" Send ", va)
-			err := resp.Send(&pb.NumReply{Message: va.(int32)})
-			if err!=nil {
-				return err
-			}
+	for item := range observable.Observe() {
+		va := item.V
+		fmt.Println(" Send ", va)
+		err := resp.Send(&pb.NumReply{Message: va.(int32)})
+		if err!=nil {
+			return err
 		}
 	}
 	return nil
