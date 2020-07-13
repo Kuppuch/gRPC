@@ -2,6 +2,7 @@
 using Grpc.Net.Client;
 using GrpcService1;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GRPCGreeterClient {
@@ -25,6 +26,7 @@ namespace GRPCGreeterClient {
 
             await foreach (var response in call.ResponseStream.ReadAllAsync()) {
                 Console.WriteLine(response.Message);
+                Thread.Sleep(5000);
             }
 
             Console.WriteLine("Press any key to exit...");
