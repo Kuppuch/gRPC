@@ -5,9 +5,9 @@ import (
 	"github.com/reactivex/rxgo/v2"
 	"google.golang.org/grpc"
 	"log"
-	"math/rand"
 	"net"
 	pb "server/Protos/google.golang.org/grpc/greet"
+	"sync"
 	"time"
 )
 
@@ -20,13 +20,13 @@ var observable rxgo.Observable
 func main()  {
 	observable = rxgo.FromEventSource(number, rxgo.WithBackPressureStrategy(rxgo.Drop))
 
-	go generate(number)
+	//go generate(number)
 
 	lis, err := net.Listen("tcp", "0.0.0.0:5001")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	srv := grpc.NewServer(grpc.WriteBufferSize(1))
+	srv := grpc.NewServer(grpc.WriteBufferSize(0))
 	pb.RegisterGreeterServer(srv, &server{})
 	fmt.Println("Serving")
 	err = srv.Serve(lis)
@@ -35,38 +35,42 @@ func main()  {
 	}
 }
 
+var counter int32 = 0
+
 func (s *server) GetRandNum(req *pb.NumRequest, resp pb.Greeter_GetRandNumServer) error {
 	fmt.Println("Метод вызван")
-	dataChannel:=observable.Observe()
-	//nc:=make( <- chan int32)
-	//close(nc)
-	//close(dataChannel)
-	err := resp.Context().Err()
-	if err!=nil{
-		return err
-	}
+	mutex := sync.Mutex{}
+	cond := sync.NewCond(&mutex)
+	go generate(mutex, cond)
+
 	for {
-		select {
-			case <-resp.Context().Done():
-				fmt.Println("Client disconnect")
-				return resp.Context().Err()
-			case va:=<- dataChannel:
-				fmt.Println(" Send ", va)
-				err := resp.Send(&pb.NumReply{Message: va.V.(int32)})
-				if err!=nil {
-					fmt.Println("Client already disconnect")
-					return err
-				}
+		mutex.Lock()
+		cond.Wait()
+		v := counter
+		mutex.Unlock()
+		err := resp.Send(&pb.NumReply{Message: v})
+		fmt.Printf(" %v\n", v)
+		//time.Sleep(5000 * time.Millisecond)
+		if err!=nil {
+			fmt.Println("Client already disconnect")
+
 		}
 	}
+
 }
 
-func generate(number chan rxgo.Item) {
+func generate(mutex sync.Mutex, cond *sync.Cond) {
 	//var val int32 = 0
 	for {
-		val := rand.Int31n(100)
+		/*val := rand.Int31n(100)
 		//val++
 		number <- rxgo.Item{V: val}
-		time.Sleep(time.Second)
+		time.Sleep(time.Second)*/
+		mutex.Lock()
+		counter++
+		fmt.Printf("Generate %v\n", counter)
+		cond.Broadcast()
+		mutex.Unlock()
+		time.Sleep(1000 * time.Millisecond)
 	}
 }
