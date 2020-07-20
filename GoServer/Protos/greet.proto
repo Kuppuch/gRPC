@@ -9,6 +9,7 @@ package greet;
 
 service Greeter {
   rpc GetRandNum (NumRequest) returns (stream NumReply);
+  rpc GetSoloNum (NumRequest) returns (NumReply);
   //rpc SayHello (HelloRequest) returns (HelloReply);
 }
 /*
